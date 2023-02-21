@@ -16,18 +16,23 @@ class HandleFileUpload(APIView):
         try:
             data = request.data
             serializer = FileListSerializer(data=data)
-
-            if serializer.is_valid():
-                serializer.save()
+            
+            if data:
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({
+                        'status': 200,
+                        'message': 'Files uploaded successfully',
+                        'data' : serializer.data
+                    })
                 return Response({
-                    'status': 200,
-                    'message': 'Files uploaded successfully',
-                    'data' : serializer.data
-                })
+                        'status': 400,
+                        'message': 'Something went wrong!!',
+                        'data': serializer.errors
+                    })
             return Response({
-                    'status': 400,
-                    'message': 'Something went wrong!!',
-                    'data': serializer.errors
-                })
+                'status' : 401,
+                'message' : 'No data was uploaded',
+            })
         except Exception as e:
             print(e)
